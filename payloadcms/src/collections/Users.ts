@@ -12,8 +12,8 @@ const Users: CollectionConfig = {
     {
       name: 'nama_user',
       type: 'text',
-      unique: true,
-    },
+      unique: true
+    }
   ],
 }
 
