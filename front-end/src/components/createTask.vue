@@ -62,29 +62,29 @@
 </style>
 
 <script>
-import { tdListAction } from '../assets/doTable';
+import { doit } from '../assets/ploadDo';
 
 export default {
     data() {
         return {
-            tdListAction,
             newTask: "",
             newKat: "",
         }
     },
     methods: {
-        pushNewtask() {
-            if (this.newTask === "" || this.newKat === "") return;
-            const newDo = {
-                doNum: parseInt(Date.now().toString()),
-                tdo: this.newTask,
-                kategori: this.newKat,
-                sdh: 0
+        async pushNewtask() {
+            let newkateg = this.newKat.toLowerCase()
+            if(this.newTask == '' || this.newKat == '') return 0
+            const newtdData = {
+                task: this.newTask,
+                kateg: newkateg
             }
-            tdListAction.addTdForm(newDo);
-            this.newTask = "";
-            this.newKat = "";
-            this.$emit("close-modal");
+
+            await doit.createTODO(newtdData)
+
+            this.newTask = ''
+            this.newKat = ''
+
         }
     }
 }

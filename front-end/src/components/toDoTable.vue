@@ -17,17 +17,17 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody v-for="(task, index) in tdListAction.tdListRill">
-                <tr v-if="task.sdh == 0">
+            <tbody v-for="(task, index) in doit.tdlist.filter((task) => task.status_td == 0 && task.nama_user.id == doit.userData.id)">
+                <tr>
                     <th>{{ index+1 }}</th>
-                    <th>{{ task.tdo }}</th>
-                    <th>{{ task.kategori }}</th>
-                    <th class="checklist-box"><svg v-if="task.sdh == 0" @click="tdListAction.moveToDone(task.doNum)" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-square" viewBox="0 0 16 16">
+                    <th>{{ task.nama_td }}</th>
+                    <th>{{ task.kategori.nama_kat }}</th>
+                    <th class="checklist-box"><svg v-if="task.status_td == 0" @click="doit.setFinished(task.id)" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-square" viewBox="0 0 16 16">
                                                 <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
                                                 </svg></th>
                     <th>
-                        <div class="actionBtn">
-                            <router-link :to="{name: 'edit', params: {doNum : task.doNum}}">
+                        <div class="actionBtn" @click="doit.setChange(task.id)">
+                            <router-link :to="{name: 'edit', params: {id : task.id}}">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="1.2em" viewBox="0 0 512 512"
                                     class="cursor-pointer">
                                     <path
@@ -35,7 +35,7 @@
                                 </svg>
                             </router-link>
                             <svg 
-                                @click="tdListAction.deleteTd(task.doNum)"
+                                @click="doit.delTD(task.id)"
                                 xmlns="http://www.w3.org/2000/svg" height="1.2em" viewBox="0 0 448 512"
                                 class="cursor-pointer">
                                 <path
@@ -61,19 +61,19 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody v-for="(task, index) in tdListAction.tdListDoneRill">
-                <tr v-if="task.sdh == 1">
+            <tbody v-for="(taskdone, index) in doit.tdlist.filter((taskdone) => taskdone.status_td == 1 && taskdone.nama_user.id == doit.userData.id)">
+                <tr>
                     <th>{{ index+1 }}</th>
-                    <th>{{ task.tdo }}</th>
-                    <th>{{ task.kategori }}</th>
-                    <th class="checklist-box"><svg v-if="task.sdh==1" @click="tdListAction.moveToDo(task.doNum)" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check-square" viewBox="0 0 16 16">
+                    <th>{{ taskdone.nama_td }}</th>
+                    <th>{{ taskdone.kategori.nama_kat }}</th>
+                    <th class="checklist-box"><svg v-if="taskdone.status_td==1" @click="doit.setUnFinished(taskdone.id)" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check-square" viewBox="0 0 16 16">
                                                 <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
                                                 <path d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.235.235 0 0 1 .02-.022z"/>
                                                 </svg></th>
                     <th>
                         <div class="actionBtn">
                             <svg 
-                                @click="tdListAction.deleteTdDone(task.doNum)"
+                                @click="doit.delTD(taskdone.id)"
                                 xmlns="http://www.w3.org/2000/svg" height="1.2em" viewBox="0 0 448 512"
                                 class="cursor-pointer">
                                 <path
@@ -291,7 +291,7 @@ footer {
 </style>
 
 <script>
-import { tdListAction } from '../assets/doTable';
+import { doit } from '../assets/ploadDo'
 import Modal from '../components/modal.vue'
 import createTask from '../components/createTask.vue'
 
@@ -302,28 +302,20 @@ export default {
     },
     data() {
         return {
-            tdListAction,
             modalKah: false,
+            doit
         }
     },
     methods: {
         modalTgl() {
             this.modalKah = !this.modalKah;
+        },
+        async setkuki() {
+            await doit.createKuki()
         }
     },
-    mounted() {
-        if(localStorage.length == 0) {
-            tdListAction.setLclStrg();
-        } else {
-            for(let task in localStorage) {
-                let doList = localStorage.getItem(task);
-                if (doList !== null) {
-                    doList=JSON.parse(doList)
-                    if (doList.sdh == 0) tdListAction.addTd(doList)
-                    else if (doList.sdh == 1) tdListAction.addTdDone(doList)
-                }
-            }
-        }
+    beforeMount() {
+        this.setkuki()
     }
 }
 </script>

@@ -20,7 +20,7 @@
             <input v-model="editKat" class="d-inline-block mb-3">
         </div>
         <div>
-            <button @click="changeTask(this.dNum)">Change!</button>
+            <button @click="changeTask()">Change!</button>
         </div>
     </div>
 </template>
@@ -49,40 +49,31 @@
 </style>
 
 <script>
-import { tdListAction } from '../assets/doTable';
+import { RouterLink } from 'vue-router';
+import { doit } from '../assets/ploadDo';
 
 export default {
     data() {
         return {
-            tdListAction,
-            dNum: parseInt(this.$route.params.doNum),
+            doit,
             editTask: "",
             editKat: "",
-            sdhkah: 0
+            todoData: {
+                task: '',
+                kat: ''
+            }
         }
     },
     methods: {
-        getTask() {
-            const task = this.tdListAction.tdListRill.find((task) => task.doNum === this.dNum);
-            if (task) {
-                this.editTask = task.tdo;
-                this.editKat = task.kategori;
-            }
-        },
-        changeTask(thisNum) {
-            const chngTask = {
-                doNum: parseInt(thisNum),
-                tdo: this.editTask,
-                kategori: this.editKat,
-                sdh: this.sdhkah
-            };
-            tdListAction.changeToDo(chngTask);
+        async changeTask() {
+            this.todoData.task = this.editTask
+            this.todoData.kat = this.editKat.toLowerCase()
+            await doit.updateTD(this.todoData)
+            this.editTask = ''
+            this.editKat = ''
             this.$router.push('/')
 
         }
-    },
-    mounted() {
-        this.getTask();
     }
 }
 </script>
