@@ -7,7 +7,7 @@ import { buildConfig } from 'payload/config'
 
 import Users from './collections/Users'
 import Log from './collections/Log'
-import Category from './collections/Category'
+import Category from './collections/category'
 import todo from './collections/todo'
 
 export default buildConfig({
@@ -15,6 +15,7 @@ export default buildConfig({
     user: Users.slug,
     bundler: webpackBundler(),
   },
+  cors: ['http://localhost:5173'],
   editor: slateEditor({}),
   collections: [Users,Log,Category,todo],
   typescript: {
